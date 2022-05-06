@@ -20,7 +20,8 @@ impl<T: Target, C: Connection> GdbStubImpl<T, C> {
                     None => return Ok(HandlerStatus::Handled),
                     Some(v) => v,
                 };
-                let dst = &mut dst[0..reg_size];
+                //let dst = &mut dst[0..reg_size];
+                let dst = &mut dst[0..(reg_size / 8)];
                 ops.read_register(id, reg_id, dst).handle_error()?;
 
                 res.write_hex_buf(dst)?;

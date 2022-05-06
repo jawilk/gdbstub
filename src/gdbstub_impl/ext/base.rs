@@ -39,6 +39,29 @@ impl<T: Target, C: Connection> GdbStubImpl<T, C> {
         command: Base<'a>,
     ) -> Result<HandlerStatus, Error<T::Error, C::Error>> {
         let handler_status = match command {
+	    Base::qRegisterInfo(cmd) => {
+                if cmd.reg_num < 10 {
+                    res.write_str("name:");
+                    res.write_num(cmd.reg_num);
+                    res.write_str(";bitsize:64;offset:");
+                    res.write_num(cmd.reg_num*8);
+                    res.write_str(";encoding:uint;format:hex;set:General Purpose Registers;gcc:");
+                    res.write_num(cmd.reg_num);
+                    res.write_str(";dwarf:");
+                    res.write_num(cmd.reg_num);
+                    res.write_str(";");
+                }
+                else if cmd.reg_num == 10 {
+        	    res.write_str("name:r10;alt-name:sp;bitsize:64;offset:72;encoding:uint;format:hex;set:General Purpose Registers;gcc:10;dwarf:10;generic:sp;");
+		}
+                else if cmd.reg_num == 11 {
+        	    res.write_str("name:r11;alt-name:pc;bitsize:64;offset:80;encoding:uint;format:hex;set:General Purpose Registers;gcc:11;dwarf:11;generic:pc;");
+		}
+                else {
+		    res.write_str("E45");
+ 		}
+                HandlerStatus::Handled
+            }
             // ------------------ Handshaking and Queries ------------------- //
             Base::qSupported(cmd) => {
                 // XXX: actually read what the client supports, and enable/disable features
