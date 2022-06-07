@@ -54,6 +54,7 @@
 #![deny(missing_docs)]
 
 pub mod arm;
+pub mod bpf;
 pub mod mips;
 pub mod msp430;
 pub mod ppc;
